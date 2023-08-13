@@ -6,7 +6,7 @@ function main() {
   // Headers
   sheet.appendRow(['Category Label', 'Clicks', 'Conversions']);
 
-  // Query for customer search term insights
+  // Query for customer search term insights with at least 1 click
   let query = AdsApp.report(
     `
     SELECT 
@@ -16,6 +16,7 @@ function main() {
     FROM customer_search_term_insight 
     WHERE 
       segments.date DURING LAST_30_DAYS
+      AND metrics.clicks >= 1
     ORDER BY 
       metrics.clicks ASC 
     `
@@ -32,4 +33,3 @@ function main() {
     ]);
   }
 
-} // end main
