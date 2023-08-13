@@ -10,7 +10,7 @@ function main() {
   let query = AdsApp.report(
     `
     SELECT 
-      campaign.name,
+      segments.campaign,
       customer_search_term_insight.category_label, 
       metrics.clicks, 
       metrics.conversions 
