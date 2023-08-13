@@ -1,24 +1,39 @@
 // Create a sheet with search query data for all pMax campaigns from the last 30 days
-
 function main() {
- 
- let ss = SpreadsheetApp.openByUrl(''); // Enter the sheet URL between the quotes
+  let ss = SpreadsheetApp.openByUrl(''); // Enter the sheet URL between the quotes
+  let sheet = ss.getSheetByName('Sheet1');
 
- let query = AdsApp.report(
- `
-SELECT 
-  campaign_search_term_insight.category_label, 
-  metrics.clicks, 
-  metrics.conversions 
-FROM campaign_search_term_insight 
-WHERE 
-  segments.date DURING LAST_30_DAYS 
-  AND campaign.advertising_channel_type IN ('PERFORMANCE_MAX') 
-ORDER BY 
-  metrics.clicks ASC 
- `
- ); 
+  // Fetch all Performance Max campaign IDs
+  let campaignIds = [];
+  let campaigns = AdsApp.campaigns()
+                      .withCondition("AdvertisingChannelType = 'PERFORMANCE_MAX'")
+                      .forDateRange("LAST_30_DAYS")
+                      .get();
 
- query.exportToSheet(ss.getSheetByName('Sheet1')); 
+  while (campaigns.hasNext()) {
+    let campaign = campaigns.next();
+    campaignIds.push(campaign.getId());
+  }
+
+  // Loop through the campaign IDs and fetch the search term insights
+  for (let campaignId of campaignIds) {
+    let query = AdsApp.report(
+      `
+      SELECT 
+        campaign_search_term_insight.category_label, 
+        metrics.clicks, 
+        metrics.conversions 
+      FROM campaign_search_term_insight 
+      WHERE 
+        segments.date DURING LAST_30_DAYS 
+        AND campaign_search_term_insight.campaign_id = '${campaignId}'
+      ORDER BY 
+        metrics.clicks ASC 
+      `
+    );
+
+    // Export to the sheet
+    query.exportToSheet(sheet);
+  }
 
 } // end main
