@@ -18,6 +18,8 @@ function main() {
     campaignIds.push(campaign.getId());
   }
 
+  Logger.log("Campaign IDs: " + campaignIds); // Log the campaign IDs
+
   // Loop through the campaign IDs and fetch the search term insights
   for (let campaignId of campaignIds) {
     let report = AdsApp.report(
@@ -36,6 +38,7 @@ function main() {
     );
 
     let rows = report.rows();
+    let rowCount = 0;
     while (rows.hasNext()) {
       let row = rows.next();
       sheet.appendRow([
@@ -44,7 +47,9 @@ function main() {
         row['metrics.clicks'],
         row['metrics.conversions']
       ]);
+      rowCount++;
     }
+    Logger.log("Rows retrieved for Campaign ID " + campaignId + ": " + rowCount); // Log the number of rows
   }
 
 } // end main
