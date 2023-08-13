@@ -3,6 +3,9 @@ function main() {
   let ss = SpreadsheetApp.openByUrl(''); // Enter the sheet URL between the quotes
   let sheet = ss.getSheetByName('Sheet1');
 
+  // Headers
+  sheet.appendRow(['Campaign ID', 'Category Label', 'Clicks', 'Conversions']);
+
   // Fetch all Performance Max campaign IDs
   let campaignIds = [];
   let campaigns = AdsApp.campaigns()
@@ -17,7 +20,7 @@ function main() {
 
   // Loop through the campaign IDs and fetch the search term insights
   for (let campaignId of campaignIds) {
-    let query = AdsApp.report(
+    let report = AdsApp.report(
       `
       SELECT 
         campaign_search_term_insight.category_label, 
@@ -32,8 +35,16 @@ function main() {
       `
     );
 
-    // Export to the sheet
-    query.exportToSheet(sheet);
+    let rows = report.rows();
+    while (rows.hasNext()) {
+      let row = rows.next();
+      sheet.appendRow([
+        campaignId,
+        row['campaign_search_term_insight.category_label'],
+        row['metrics.clicks'],
+        row['metrics.conversions']
+      ]);
+    }
   }
 
 } // end main
