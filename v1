@@ -7,14 +7,15 @@ function main() {
  let query = AdsApp.report(
  `
 SELECT 
- campaign_search_term_insight.category_label, 
- metrics.clicks, 
- metrics.conversions
+  campaign_search_term_insight.category_label, 
+  metrics.clicks, 
+  metrics.conversions 
 FROM campaign_search_term_insight 
 WHERE 
- segments.date DURING LAST_30_DAYS 
- AND campaign.performance_goal_type = 'PERFORMANCE_GOAL_TYPE_MAXIMIZE_CONVERSIONS'
-ORDER BY metrics.conversions
+  segments.date DURING LAST_30_DAYS 
+  AND campaign.advertising_channel_type IN ('PERFORMANCE_MAX') 
+ORDER BY 
+  metrics.clicks ASC 
  `
  ); 
 
