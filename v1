@@ -1,0 +1,23 @@
+// Create a sheet with search query data for all pMax campaigns from the last 30 days
+
+function main() {
+ 
+ let ss = SpreadsheetApp.openByUrl(''); // Enter the sheet URL between the quotes
+
+ let query = AdsApp.report(
+ `
+SELECT 
+ campaign_search_term_insight.category_label, 
+ metrics.clicks, 
+ metrics.conversions
+FROM campaign_search_term_insight 
+WHERE 
+ segments.date DURING LAST_30_DAYS 
+ AND campaign.performance_goal_type = 'PERFORMANCE_GOAL_TYPE_MAXIMIZE_CONVERSIONS'
+ORDER BY metrics.conversions
+ `
+ ); 
+
+ query.exportToSheet(ss.getSheetByName('Sheet1')); 
+
+} // end main
