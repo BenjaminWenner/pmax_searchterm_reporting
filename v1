@@ -6,11 +6,14 @@ function main() {
   // Headers
   sheet.appendRow(['Campaign Name', 'Category Label', 'Clicks', 'Conversions']);
 
-  // Query for customer search term insights with at least 1 click
+  // Placeholder for specific customer_search_term_insight.id
+  let searchTermInsightId = 'YOUR_SEARCH_TERM_INSIGHT_ID_HERE';
+
+  // Query for customer search term insights with at least 1 click and specific search term insight ID
   let query = AdsApp.report(
     `
     SELECT 
-      segments.campaign,
+      campaign.name,
       customer_search_term_insight.category_label, 
       metrics.clicks, 
       metrics.conversions 
@@ -18,6 +21,7 @@ function main() {
     WHERE 
       segments.date DURING LAST_30_DAYS
       AND metrics.clicks >= 1
+      AND customer_search_term_insight.id = '${searchTermInsightId}'
     ORDER BY 
       metrics.clicks ASC 
     `
