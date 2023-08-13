@@ -4,12 +4,13 @@ function main() {
   let sheet = ss.getSheetByName('Sheet1');
 
   // Headers
-  sheet.appendRow(['Category Label', 'Clicks', 'Conversions']);
+  sheet.appendRow(['Campaign Name', 'Category Label', 'Clicks', 'Conversions']);
 
   // Query for customer search term insights with at least 1 click
   let query = AdsApp.report(
     `
     SELECT 
+      campaign.name,
       customer_search_term_insight.category_label, 
       metrics.clicks, 
       metrics.conversions 
@@ -27,6 +28,7 @@ function main() {
   while (rows.hasNext()) {
     let row = rows.next();
     sheet.appendRow([
+      row['campaign.name'],
       row['customer_search_term_insight.category_label'],
       row['metrics.clicks'],
       row['metrics.conversions']
